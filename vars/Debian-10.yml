@@ -1,0 +1,65 @@
+---
+graphviz_builddep_packages:
+  - curl
+  - debhelper-compat
+  - dh-python
+  - tk-dev
+  - tcl-dev
+  - libfreetype6-dev
+  - zlib1g-dev
+  - libjpeg-dev
+  - libpng-dev
+  - libxaw7-dev
+  - bison
+  - flex
+  - libexpat1-dev
+  - libfontconfig1-dev
+  - swig
+  - libperl-dev
+  - libgd-dev
+  - guile-2.2-dev
+  - groff-base
+  - ghostscript
+  - lua5.2
+  - liblua5.2-dev
+  - ruby
+  - ruby-dev
+  - libargon2-dev
+  - libsodium-dev
+  - libxml2-dev
+  - php-dev
+  - python3-dev
+  - libcairo2-dev
+  - libpango1.0-dev
+  - d-shlibs
+  - chrpath
+  - libgtk2.0-dev
+  - libgts-dev
+  - libann-dev
+  - librsvg2-dev
+  - libwebp-dev
+
+
+graphviz_packages:
+  - libcdt5
+  - libcgraph6
+  - libgv-guile
+  - libgv-lua
+  - libgv-perl
+  - libgv-php7
+  - libgv-ruby
+  - libgv-tcl
+  - libgvc6
+  - libgvc6-plugins-gtk
+  - libgvpr2
+  - liblab-gamut1
+  - libpathplan4
+  - python3-gv
+
+graphviz_python_library: []
+
+graphviz_version: "2.44.1"
+
+graphviz_url: "https://www2.graphviz.org/Packages/stable/portable_source/graphviz-{{ graphviz_version }}.tar.gz"
+graphviz_workspace: "/root/workspace/graphviz-{{ graphviz_version }}"
+
