@@ -45,6 +45,8 @@ graphviz_packages:
   - libcgraph6
   - liblab-gamut1
   - libpathplan4
+  - libcairo2
+  - libpango1.0
 
 graphviz_python_library: []
 

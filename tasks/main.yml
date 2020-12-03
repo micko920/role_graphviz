@@ -138,7 +138,6 @@
   environment:
     CFLAGS: -g -O2 -Wno-sign-conversion -Wno-unused-parameter
     CXXFLAGS: -g -O2 -Wno-sign-conversion -Wno-unused-parameter
-    GROFF_FONT: /usr/share/groff/1.22.3/font
 
   when:
     - new_graphviz_build is defined
