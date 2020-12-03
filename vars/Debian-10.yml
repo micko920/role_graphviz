@@ -43,18 +43,8 @@ graphviz_builddep_packages:
 graphviz_packages:
   - libcdt5
   - libcgraph6
-  - libgv-guile
-  - libgv-lua
-  - libgv-perl
-  - libgv-php7
-  - libgv-ruby
-  - libgv-tcl
-  - libgvc6
-  - libgvc6-plugins-gtk
-  - libgvpr2
   - liblab-gamut1
   - libpathplan4
-  - python3-gv
 
 graphviz_python_library: []
 
