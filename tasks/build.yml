@@ -1,0 +1,154 @@
+---
+- name: Ensure Graphviz packages are removed.
+  apt:
+    name: "{{ item }}"
+    state: absent
+    autoclean: yes
+    autoremove: yes
+    purge: yes
+  loop:
+    - libxdot4
+    - graphviz
+
+- name: Temp remove groff restriction
+  replace:
+    path: /etc/dpkg/dpkg.cfg.d/docker
+    regexp: 'path-exclude /usr/share/groff/\*'
+    replace: '# path-exclude /usr/share/groff/*'
+
+- name: Ensure Graphviz Python libraries are installed.
+  apt:
+    name: "{{ graphviz_python_library }}"
+    state: present
+
+#
+- name: Ensure Graphviz build packages are installed.
+  apt:
+    name: "{{ item }}"
+    install_recommends: no
+    state: present
+  register: apt_installed_packages
+  loop: "{{ graphviz_builddep_packages }}"
+
+# - name: Flag new apt build deps
+#   set_fact:
+#     new_graphviz_builddeps: apt_installed_packages
+
+# - name: show the result
+#   debug:
+#     msg: "{{ item.invocation }}"
+#   loop: "{{ apt_installed_packages.results}}"
+
+#
+- name: Ensure workspace exists
+  file:
+    path: "/root/workspace"
+    state: directory
+    mode: 0700
+    recurse: true
+
+#
+- name: Get the source bundle
+  unarchive:
+    src: "{{ graphviz_url }}"
+    remote_src: true
+    dest: "/root/workspace"
+    mode: 0755
+  register: install_r
+  until: install_r is succeeded
+  retries: 3
+
+#
+- name: Configure
+  command:
+    chdir: "{{ graphviz_workspace }}"
+    argv:
+      - ./configure
+      - --disable-silent-rules
+      - --prefix=/usr
+      - --datadir=\$${prefix}/share
+      - --infodir=\$${prefix}/share/info
+      - --mandir=\$${prefix}/share/man
+      - --disable-static
+      - --without-included-ltdl
+      - --with-pangocairo
+      - --with-x
+      - --with-gdk-pixbuf
+      - --without-glut
+      - --with-gnomeui
+      - --with-gtk
+      - --without-poppler
+      - --with-gts
+      - --with-ipsepcola
+      - --without-qt
+      - --with-rsvg
+      - --with-ann
+      - --with-webp
+      - --enable-guile
+      - --enable-lua
+      - --enable-php
+      - --enable-ruby
+      - --enable-tcl
+      - --enable-java
+      - --enable-r
+      - --disable-go
+      - --disable-ocaml
+      - --disable-sharp
+      - --disable-python2
+      - --enable-python3
+  environment:
+    CFLAGS: -g -O2 -Wno-sign-conversion -Wno-unused-parameter
+    CXXFLAGS: -g -O2 -Wno-sign-conversion -Wno-unused-parameter
+
+
+#
+- name: Build
+  make:
+    chdir: "{{ graphviz_workspace }}"
+
+#
+- name: Install
+  make:
+    chdir: "{{ graphviz_workspace }}"
+    target: install
+
+- name: Replace groff restriction
+  replace:
+    path: /etc/dpkg/dpkg.cfg.d/docker
+    regexp: '# path-exclude /usr/share/groff/\*'
+    replace: 'path-exclude /usr/share/groff/*'
+
+- name: Ensure Graphviz packages are installed.
+  apt:
+    name: "{{ item }}"
+    install_recommends: no
+    state: present
+  loop: "{{ graphviz_packages }}"
+
+- name: Remove workspace
+  file:
+    path: "/root/workspace"
+    state: absent
+
+#
+- name: Remove build deps packages which were installed.
+  apt:
+    name: "{{ item.item }}"
+    install_recommends: no
+    state: absent
+    purge: yes
+  loop: "{{ apt_installed_packages.results}}"
+  loop_control:
+    label: "{{ item.item }}"
+  when:
+    - item is defined
+    - item.changed
+
+- name: Remove build packages from the cache
+  apt:
+    autoclean: yes
+
+#
+- name: Remove dependencies that are no longer required
+  apt:
+    autoremove: yes
