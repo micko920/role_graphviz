@@ -11,7 +11,7 @@ driver:
   provider:
     name: virtualbox
 platforms:
-  - name: instance
+  - name: "homelab-box"
     box: "debian/${MOLECULE_VAGRANT_BOX:-bullseye64}"
     # This is to fix the error ACCESS_DENIED when it tryes to write the console
     # log to the installation directory.
